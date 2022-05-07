@@ -11,6 +11,9 @@ in_table_list = []
 in_table_count = []
 out_table_list = []
 out_table_count = []
+node_set = set()    #以集合的形式记录所有id
+from_node_set = set()
+to_node_set = set()
 tmp_dict = {}
 #max_id = 0
 max_count = 500 #每个块能在内存中存储多少个元素
@@ -37,6 +40,10 @@ with open('data.txt','r') as f:
         assert(len(str_list) == 2)  #from_node to_node
         from_node = eval(str_list[0])
         to_node = eval(str_list[1])
+        node_set.add(from_node)
+        node_set.add(to_node)
+        from_node_set.add(from_node)
+        to_node_set.add(to_node)
         from_index = from_node // 1000
         to_index = to_node // 1000      #获取应当所在块
         if to_node in in_table_list[to_index]:
@@ -121,7 +128,14 @@ for _ in range(10):
                 pickle.dump(out_table_list[_], f1)
         out_table_list[_].clear()  # 清楚该块占用的内存
 
-
+with open(('./tmp/node_set'), 'wb+') as f:  #以集合的形式存入所有节点的id
+    pickle.dump(node_set, f)
+no_out_node = node_set - from_node_set
+no_in_node = node_set - to_node_set
+with open(('./tmp/no_out_node'), 'wb+') as f:  #以集合的形式存入没有出度的节点的id
+    pickle.dump(no_out_node, f)
+with open(('./tmp/no_in_node'), 'wb+') as f:  #以集合的形式存入没有入度的节点的id
+    pickle.dump(no_in_node, f)
 # with open('temp.txt','wb') as f:
 #     pickle.dump(in_table_list[0],f)
 # with open('temp.txt','rb') as f:
