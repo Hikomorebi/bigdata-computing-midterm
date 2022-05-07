@@ -34,7 +34,7 @@ for _ in range(10):
                 out_count[key] = len(tmp_dict[key])
             tmp_dict.clear()
 
-stop_loss = 0.000001
+stop_loss = 0.0000001
 loss = 999
 old_rank = {}
 new_rank = {}
@@ -68,6 +68,6 @@ while count>0:
 sort_list = sorted(old_rank.items(), key=lambda x: x[1], reverse=True)
 with open('./result.txt','w') as f:
     for _ in range(100):
-        str1 = str(sort_list[_][0]) + ' ' + str(sort_list[_][1]) + '\n'
+        str1 = str(sort_list[_][0]) + '    ' + str(sort_list[_][1]) + '\n'
         f.write(str1)
 
