@@ -10,8 +10,11 @@ tmp_dict = {}
 iter_dict = {}
 out_count = {}
 node_count = 0
-teleport_par = 0.85
-
+teleport_par = 0.85 #设置teleport parameter
+stop_loss = 0.0000001
+loss = 1
+old_rank = {}
+new_rank = {}
 
 
 if os.path.exists('./tmp/node_set'):
@@ -22,6 +25,9 @@ else:
 
 node_count = len(node_set)
 
+for _ in node_set:
+    old_rank[_] = 1 / node_count
+    new_rank[_] = 0
 
 '''
 接下来获取每一个节点的出度
@@ -34,16 +40,8 @@ for _ in range(10):
                 out_count[key] = len(tmp_dict[key])
             tmp_dict.clear()
 
-stop_loss = 0.0000001
-loss = 999
-old_rank = {}
-new_rank = {}
-for _ in node_set:
-    old_rank[_] = 1 / node_count
-    new_rank[_] = 0
-count = 20
-while count>0:
-    count -= 1
+
+while loss > stop_loss:
     for _ in range(10):
         if os.path.exists('./tmp/in_table' + str(_)):
             with open('./tmp/in_table' + str(_), 'rb') as f:
@@ -65,8 +63,10 @@ while count>0:
         loss += abs(old_rank[_] - new_rank[_])
         old_rank[_] = new_rank[_]
         new_rank[_] = 0
-sort_list = sorted(old_rank.items(), key=lambda x: x[1], reverse=True)
-with open('./result.txt','w') as f:
+
+sort_list = sorted(old_rank.items(), key=lambda x: x[1], reverse=True)  #对结果进行排序
+
+with open('./result.txt','w') as f: #将top100节点信息输出至result.txt
     for _ in range(100):
         str1 = str(sort_list[_][0]) + '    ' + str(sort_list[_][1]) + '\n'
         f.write(str1)
