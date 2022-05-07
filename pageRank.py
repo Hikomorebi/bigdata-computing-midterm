@@ -28,7 +28,9 @@ for _ in node_set:
     new_rank[_] = 0
 
 
-while loss > stop_loss:
+# while loss > stop_loss:
+count = 20
+while count > 0:
     for _ in range(10):
         if os.path.exists('./tmp/iter_table' + str(_)):
             with open('./tmp/iter_table' + str(_), 'rb') as f:
@@ -42,6 +44,7 @@ while loss > stop_loss:
     for _ in node_set:
         loss += abs(old_rank[_] - new_rank[_])
         old_rank[_] = new_rank[_]
+    count -= 1
 
 # for _ in range(10):
 #     if os.path.exists('./tmp/iter_table' + str(_)):
@@ -58,7 +61,13 @@ while loss > stop_loss:
 #     old_rank[_] = new_rank[_]
 #print(new_rank)
 
-print(sorted(new_rank.items(), key = lambda kv:(kv[1], kv[0])))
+
+sort_list = sorted(new_rank.items(), key=lambda x: x[1], reverse=True)
+with open('./result.txt','w') as f:
+    for _ in range(100):
+        str1 = str(sort_list[_][0]) + ' ' + str(sort_list[_][1]) + '\n'
+        f.write(str1)
+
 
 
 
