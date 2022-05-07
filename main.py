@@ -7,7 +7,6 @@ import pickle
 import os
 
 tmp_dict = {}
-iter_dict = {}
 out_count = {}
 node_count = 0
 teleport_par = 0.85 #设置teleport parameter
