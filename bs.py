@@ -86,6 +86,42 @@ with open('data.txt','r') as f:
             out_table_list[from_index].clear() #清楚该块占用的内存
             out_table_count[from_index] = 0 #重新计数
 
+#最后将内存中所有块中元素存入磁盘
+for _ in range(10):
+    if in_table_count[_] != 0:
+        if os.path.exists('./tmp/in_table' + str(_)):  # 判断是否为第一次存入磁盘
+            with open('./tmp/in_table' + str(_), 'rb') as f1:
+                tmp_dict = pickle.load(f1)
+                for key in in_table_list[_].keys():
+                    if key in tmp_dict:
+                        tmp_dict[key].extend(in_table_list[_][key])
+                    else:
+                        tmp_dict[key] = in_table_list[_][key]
+            with open('./tmp/in_table' + str(_), 'wb+') as f1:
+                pickle.dump(tmp_dict, f1)
+            tmp_dict.clear()
+        else:
+            with open('./tmp/in_table' + str(_), 'wb+') as f1:
+                pickle.dump(in_table_list[_], f1)
+        in_table_list[_].clear()  # 清楚该块占用的内存
+    if out_table_count[_] != 0:
+        if os.path.exists('./tmp/out_table' + str(_)):  # 判断是否为第一次存入磁盘，如果不是，则需要将该块从磁盘中取出，合并后再存入磁盘
+            with open('./tmp/out_table' + str(_), 'rb') as f1:
+                tmp_dict = pickle.load(f1)
+                for key in out_table_list[_].keys():  # 合并字典
+                    if key in tmp_dict:
+                        tmp_dict[key].extend(out_table_list[_][key])
+                    else:
+                        tmp_dict[key] = out_table_list[_][key]
+            with open('./tmp/out_table' + str(_), 'wb+') as f1:
+                pickle.dump(tmp_dict, f1)
+            tmp_dict.clear()
+        else:
+            with open('./tmp/out_table' + str(_), 'wb+') as f1:
+                pickle.dump(out_table_list[_], f1)
+        out_table_list[_].clear()  # 清楚该块占用的内存
+
+
 # with open('temp.txt','wb') as f:
 #     pickle.dump(in_table_list[0],f)
 # with open('temp.txt','rb') as f:
